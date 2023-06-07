@@ -24,7 +24,7 @@ def obtener_direccion_ip():
     except socket.gaierror:
         return None
 
-# Lista blanca de direcciones IP autorizadas
+# Lista blanca de direcciones IP autorizadas / White list of authorized IP addresses
 direcciones_ip_permitidas = {
     'usuario1': ['192.168.1.0/24'],
     'usuario2': ['192.168.1.101']
@@ -57,7 +57,7 @@ def guardar_registro_no_autorizado(usuario, direccion_ip, datos_localizacion):
     mensaje = f'Intento no autorizado - Usuario: {usuario} - Dirección IP: {direccion_ip} - Localización: {datos_localizacion}'
     logging.warning(mensaje)
     
-    # Guardar el registro en un archivo de texto
+    # Guardar el registro en un archivo de texto / Save the log to a text file
     try:
         with open('registros.txt', 'a') as archivo:
             archivo.write(mensaje + '\n')
@@ -69,7 +69,7 @@ def registrar_actividad(usuario, accion, direccion_ip, datos_localizacion):
     mensaje = f'[{fecha_hora}] - Usuario: {usuario} - Acción: {accion} - Dirección IP: {direccion_ip} - Localización: {datos_localizacion}'
     logging.info(mensaje)
     
-    # Guardar el registro en un archivo de texto
+    # Guardar el registro en un archivo de texto / Save the log to a text file
     try:
         with open('registros.txt', 'a') as archivo:
             archivo.write(mensaje + '\n')
@@ -78,24 +78,24 @@ def registrar_actividad(usuario, accion, direccion_ip, datos_localizacion):
 
 
 def cifrar_archivo_clave(clave_privada, ruta, contrasena):
-    # Generar una clave de cifrado basada en la contraseña
+    # Generar una clave de cifrado basada en la contraseña / Generate a password-based encryption key
     clave_cifrado = Fernet.generate_key()
     fernet = Fernet(clave_cifrado)
 
     try:
-        # Leer el contenido del archivo de clave privada
+        # Leer el contenido del archivo de clave privada / Read the content of the private key file
         with open(ruta, 'rb') as archivo:
             contenido = archivo.read()
 
-        # Cifrar el contenido utilizando la clave de cifrado
+        # Cifrar el contenido utilizando la clave de cifrado / Encrypt the content using the encryption key
         contenido_cifrado = fernet.encrypt(contenido)
 
-        # Guardar el contenido cifrado en un nuevo archivo
+        # Guardar el contenido cifrado en un nuevo archivo / Save encrypted content to a new file
         ruta_cifrado = ruta + '.enc'
         with open(ruta_cifrado, 'wb') as archivo_cifrado:
             archivo_cifrado.write(contenido_cifrado)
 
-        # Guardar la clave de cifrado en un archivo separado
+        # Guardar la clave de cifrado en un archivo separado / Save the encryption key in a separate file
         ruta_clave = ruta + '.key'
         with open(ruta_clave, 'wb') as archivo_clave:
             archivo_clave.write(clave_cifrado)
@@ -109,15 +109,15 @@ def cifrar_archivo_clave(clave_privada, ruta, contrasena):
 
 def almacenar_clave_privada(clave_privada, ruta):
     try:
-        # Guardar la clave privada en un archivo temporal
+        # Guardar la clave privada en un archivo temporal / Save the private key to a temporary file
         ruta_temporal = ruta + '.tmp'
         with open(ruta_temporal, 'wb') as archivo:
             archivo.write(clave_privada)
 
-        # Establecer los permisos de archivo de manera segura
+        # Establecer los permisos de archivo de manera segura / Set file permissions safely
         os.chmod(ruta_temporal, stat.S_IRUSR | stat.S_IWUSR)
 
-        # Renombrar el archivo temporal al nombre deseado
+        # Renombrar el archivo temporal al nombre deseado / Rename the temporary file to the desired name
         os.rename(ruta_temporal, ruta)
 
         logging.info('Se almacenó de forma segura la clave privada RSA en ' + ruta)
@@ -127,20 +127,20 @@ def almacenar_clave_privada(clave_privada, ruta):
 
 
 def generar_clave_privada():
-    # Generar una nueva clave privada RSA con un tamaño de 2048 bits
+    # Generar una nueva clave privada RSA con un tamaño de 2048 bits / Generate a new RSA private key with a size of 2048 bits
     clave_privada = rsa.generate_private_key(
         public_exponent=65537,
         key_size=2048
     )
 
-    # Serializar la clave privada en formato PEM
+    # Serializar la clave privada en formato PEM / Serializar la clave privada en formato PEM
     clave_privada_pem = clave_privada.private_bytes(
         encoding=serialization.Encoding.PEM,
         format=serialization.PrivateFormat.PKCS8,
         encryption_algorithm=serialization.NoEncryption()
     )
 
-    # Guardar la clave privada en un archivo
+    # Guardar la clave privada en un archivo / Save the private key to a file
     ruta_clave_privada = 'clave_privada.pem'
     with open(ruta_clave_privada, 'wb') as archivo_clave_privada:
         archivo_clave_privada.write(clave_privada_pem)
@@ -155,19 +155,19 @@ def obtener_agente_usuario():
 def obtener_informacion_red():
     informacion_red = {}
 
-    # Obtener la dirección IP del host local
+    # Obtener la dirección IP del host local / Get the IP address of the local host
     informacion_red['direccion_ip'] = socket.gethostbyname(socket.gethostname())
 
-    # Obtener el nombre del host local
+    # Obtener el nombre del host local / Get local host name
     informacion_red['nombre_host'] = socket.gethostname()
 
-    # Obtener la dirección MAC de la interfaz de red activa (requiere Windows)
+    # Obtener la dirección MAC de la interfaz de red activa (requiere Windows) / Get the MAC address of the active network interface (requires Windows)
     if 'Windows' in socket.gethostname():
         informacion_red['direccion_mac'] = ':'.join(['{:02X}'.format((uuid.getnode() >> i) & 0xFF) for i in range(0, 48, 8)])
     else:
         informacion_red['direccion_mac'] = 'No disponible en este sistema operativo'
 
-    # Obtener la lista de interfaces de red disponibles
+    # Obtener la lista de interfaces de red disponibles / Get list of available network interfaces
     interfaces = socket.if_nameindex()
     informacion_red['interfaces'] = [interface[1] for interface in interfaces]
 
@@ -177,42 +177,42 @@ def obtener_fecha_hora_actual():
     return datetime.datetime.now()
 
 def main():
-    # Obtener usuario, dirección IP y otros datos relevantes
+    # Obtener usuario, dirección IP y otros datos relevantes / Obtain user, IP address and other relevant data
     usuario = 'usuario1'
     direccion_ip = obtener_direccion_ip()
     agente_usuario = obtener_agente_usuario()
     informacion_red = obtener_informacion_red()
 
-    # Verificar la dirección IP y realizar las acciones correspondientes
+    # Verificar la dirección IP y realizar las acciones correspondientes / Verify the IP address and take the corresponding actions
     if verificar_direccion_ip(usuario):
         accion = 'Acceso autorizado'
         datos_localizacion = obtener_informacion_localizacion(direccion_ip)
         registrar_actividad(usuario, accion, direccion_ip, datos_localizacion)
-        # Resto del código para realizar acciones permitidas
+        # Resto del código para realizar acciones permitidas / Rest of the code to perform allowed actions
     else:
         accion = 'Intento no autorizado'
         datos_localizacion = obtener_informacion_localizacion(direccion_ip)
         registrar_actividad(usuario, accion, direccion_ip, datos_localizacion)
-        # Resto del código para manejar intentos no autorizados
+        # Resto del código para manejar intentos no autorizados / Rest of the code to handle unauthorized attempts
 
 if __name__ == '__main__':
     main()
 
 def generar_clave_privada():
-    # Generar una nueva clave privada RSA segura
+    # Generar una nueva clave privada RSA segura / Generar una nueva clave privada RSA segura
     private_key = rsa.generate_private_key(
         public_exponent=65537,
         key_size=2048,
     )
     
-    # Serializar la clave privada en formato PEM
+    # Serializar la clave privada en formato PEM / Serialize the private key in PEM format
     clave_privada_pem = private_key.private_bytes(
         encoding=Encoding.PEM,
         format=PrivateFormat.PKCS8,
         encryption_algorithm=NoEncryption()
     )
     
-    # Guardar la clave privada en un archivo
+    # Guardar la clave privada en un archivo / Save the private key to a file
     ruta_archivo = 'ruta/clave_privada.pem'
     with open(ruta_archivo, 'wb') as archivo:
         archivo.write(clave_privada_pem)
@@ -220,18 +220,18 @@ def generar_clave_privada():
     logging.info(f'Se generó una nueva clave privada RSA y se guardó en {ruta_archivo}')
 
 def almacenar_clave_privada(clave_privada, ruta):
-    # Serializar la clave privada en formato PEM
+    # Serializar la clave privada en formato PEM / Serialize the private key in PEM format
     clave_privada_pem = clave_privada.private_bytes(
         encoding=serialization.Encoding.PEM,
         format=serialization.PrivateFormat.PKCS8,
         encryption_algorithm=serialization.NoEncryption()
     )
     
-    # Guardar la clave privada en un archivo
+    # Guardar la clave privada en un archivo / Save the private key to a file
     with open(ruta, 'wb') as archivo:
         archivo.write(clave_privada_pem)
     
-    # Establecer permisos restrictivos para el archivo de clave privada
+    # Establecer permisos restrictivos para el archivo de clave privada / Set restrictive permissions for the private key file
     os.chmod(ruta, stat.S_IRUSR | stat.S_IWUSR)
     
     logging.info(f'Se almacenó de forma segura la clave privada RSA en {ruta}')
@@ -248,14 +248,14 @@ def guardar_registro(mensaje):
         archivo.write(mensaje + '\n')
 
 def cifrar_archivo_clave(clave_privada, ruta, contrasena):
-    # Serializar la clave privada en formato PEM
+    # Serializar la clave privada en formato PEM / Serialize the private key in PEM format
     clave_privada_pem = clave_privada.private_bytes(
         encoding=serialization.Encoding.PEM,
         format=serialization.PrivateFormat.PKCS8,
         encryption_algorithm=serialization.NoEncryption()
     )
     
-    # Generar una clave de cifrado a partir de la contraseña
+    # Generar una clave de cifrado a partir de la contraseña / Generate an encryption key from the password
     salt = os.urandom(16)
     kdf = default_backend().key_derivation_functions.pbkdf2.PBKDF2HMAC(
         salt=salt,
@@ -265,10 +265,10 @@ def cifrar_archivo_clave(clave_privada, ruta, contrasena):
     )
     clave_cifrada = kdf.derive(contrasena.encode())
     
-    # Generar un vector de inicialización (IV) aleatorio
+    # Generar un vector de inicialización (IV) aleatorio / Generate a random initialization vector (IV)
     iv = os.urandom(16)
     
-    # Cifrar los datos de la clave privada
+    # Cifrar los datos de la clave privada / Cifrar los datos de la clave privada
     cifrador = Cipher(
         algorithms.AES(clave_cifrada),
         modes.CBC(iv),
@@ -276,10 +276,10 @@ def cifrar_archivo_clave(clave_privada, ruta, contrasena):
     ).encryptor()
     clave_privada_cifrada = cifrador.update(clave_privada_pem) + cifrador.finalize()
     
-    # Calcular el hash de la clave cifrada
+    # Calcular el hash de la clave cifrada / Calculate the hash of the encrypted key
     hash_clave = hashlib.sha256(clave_cifrada).digest()
     
-    # Guardar los datos cifrados en el archivo
+    # Guardar los datos cifrados en el archivo / Guardar los datos cifrados en el archivo
     datos_cifrados = salt + iv + clave_privada_cifrada + hash_clave
     with open(ruta, 'wb') as archivo:
         archivo.write(datos_cifrados)
@@ -289,19 +289,19 @@ def cifrar_archivo_clave(clave_privada, ruta, contrasena):
 if __name__ == '__main__':
     logging.basicConfig(filename='registro.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-    usuario_actual = 'usuario1'  # Nombre del usuario actual
+    usuario_actual = 'usuario1'  # Nombre del usuario actual / Current user name
 
     if verificar_direccion_ip(usuario_actual):
-        # Permitir que el usuario utilice la clave privada RSA
+        # Permitir que el usuario utilice la clave privada RSA / Allow user to use RSA private key
         generar_clave_privada()
         almacenar_clave_privada('clave_privada', 'ruta/clave_privada.pem')
         registrar_actividad(usuario_actual, 'Acceso a la clave privada', obtener_direccion_ip())
         
-        # Cifrar el archivo de clave privada
+        # Cifrar el archivo de clave privada /  Cifrar el archivo de clave privada
         contrasena = 'contrasena_secreta'
         cifrar_archivo_clave('clave_privada', 'ruta/clave_privada_cifrada.pem', contrasena)
         
     else:
-        # Denegar el acceso a la clave privada RSA
+        # Denegar el acceso a la clave privada RSA / Denegar el acceso a la clave privada RSA
         registrar_actividad(usuario_actual, 'Intento de acceso denegado', obtener_direccion_ip())
         print('Acceso denegado. Dirección IP no permitida para el usuario actual.')
