@@ -1,38 +1,29 @@
-README  
+PortSentry es una herramienta que permite analizar y monitorear el tráfico de red, realizar escaneos de puertos en una red y supervisar eventos de seguridad en tiempo real. Esta herramienta es útil para identificar y analizar actividades sospechosas en la red.
 
-Este es un sistema de registro y cifrado escrito en Python. Proporciona funcionalidades para el registro de actividades, verificación de direcciones IP y cifrado de archivos utilizando criptografía RSA.
+## Características
 
-Requisitos
-  
-    Python 3.x
-    Paquetes de Python:
-    cryptography
-    requests
-    user_agents
+- Monitoreo de conexiones de red en tiempo real.
+- Identificación de direcciones IP, puertos y estados de conexión.
+- Análisis de servicios asociados a puertos.
+- Verificación de conexiones seguras a través de cifrado TLS/SSL.
+- Finalización segura de procesos en puertos específicos.
 
-Puedes instalar los paquetes requeridos utilizando el administrador de paquetes `pip` con el siguiente comando:
+## Requisitos
 
-Uso
+- Python 3.x
+- Bibliotecas requeridas, que puedes instalar ejecutando `pip install -r requirements.txt`.
 
-1. Clona o descarga el repositorio en tu máquina.
+## Uso
 
-2. Instala los requisitos mencionados anteriormente.
+- Clona este repositorio en tu sistema.
+- Crea un entorno virtual e instala las dependencias del proyecto.
+- Ejecuta la aplicación con Python 3.9 o superior:  `PortSentry.py`.
 
-3. Ejecuta el archivo `main.py` para iniciar el sistema.
+La herramienta mostrará una lista de conexiones de red en tiempo real.
+Selecciona una dirección IP o puerto para obtener información detallada.
+Puedes cerrar un puerto específico si lo deseas.
 
-4. Sigue las instrucciones proporcionadas por la aplicación para utilizar las diferentes funcionalidades.
+## Configuración
 
-Estructura del proyecto
-
-El proyecto está estructurado de la siguiente manera:
-
-- `main.py`: Punto de entrada del programa. Contiene la lógica principal para el flujo de ejecución del sistema.
-
-- `registro.log`: Archivo de registro de actividades. Guarda la información de las actividades realizadas por los usuarios.
-
-- `ruta/`: Directorio utilizado para almacenar la clave privada cifrada y otros archivos generados durante la ejecución del sistema.
-
-
-Las contribuciones son bienvenidas, si encuentras algún problema, tienes una sugerencia de mejora o deseas agregar nuevas características, no dudes en abrir un problema o enviar una solicitud de extracción.
-
-
+Puedes personalizar la configuración de registro en el archivo PortSentry.py.
+Los registros se almacenan en el directorio "logs" por defecto.
